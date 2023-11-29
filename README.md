@@ -18,6 +18,7 @@ Eliyan Dochev</a>!</h1>
 
 
 ⭐Introduction
+
 AreaCraft is a web and mobile application that allows users to create and share custom maps of their favorite areas. Users can add markers to the map to indicate points of interest, and can also add comments and photos to each marker.
 
 ⭐Getting Started
@@ -30,7 +31,6 @@ To get started with AreaCraft, follow these steps:
 5. Start the mobile component by running npm expo start --tunnel in the mobile directory.
 
 You should now be able to access the web component at http://localhost:8080 and the mobile component using the Expo app on your mobile device.
-Swagger documentation https://app.swaggerhub.com/apis-docs/VASILIYNOVIKOV/AREA/1.0
 
 ⭐Commands
 To run the server run docker compose up --build at the /server of the repository
