@@ -1,4 +1,23 @@
-⭐AreaCraft
+<h1 align="center">Hi 👋 I'm <a href="https://github.com/ElianDochev" target="blank">
+Eliyan Dochev</a>!</h1>
+<h2 align="center">Welcome to AreaCraft</h3>
+
+<h3 align="center" > <img src="https://media.giphy.com/media/iY8CRBdQXODJSCERIr/giphy.gif" width="30" height="30" style="margin-right: 10px;">Get in touch with me 🤝 </h3>
+
+<p align="center">
+
+ <div align="center"  class="icons-social" style="margin-left: 10px;">
+        <a style="margin-left: 10px;"  target="_blank" href="https://www.linkedin.com/in/elian-dochev-8a53a9250/">
+			<img src="https://img.icons8.com/doodle/40/000000/linkedin--v2.png"></a>
+        <a style="margin-left: 10px;" target="_blank" href="https://github.com/ElianDochev">
+		<img src="https://img.icons8.com/doodle/40/000000/github--v1.png"></a>
+		<a style="margin-left: 5px;" target="_blank" href="mailto:eliyan.dochev@epitech.eu">
+					<img style="width: 40px; height: 40px" src="https://image.similarpng.com/very-thumbnail/2021/09/Outlook-icon-on-transparent-background-PNG.png" ></a>
+      </div>
+</p>
+
+
+⭐Introduction
 AreaCraft is a web and mobile application that allows users to create and share custom maps of their favorite areas. Users can add markers to the map to indicate points of interest, and can also add comments and photos to each marker.
 
 ⭐Getting Started
@@ -16,8 +35,8 @@ Swagger documentation https://app.swaggerhub.com/apis-docs/VASILIYNOVIKOV/AREA/1
 ⭐Commands
 To run the server run docker compose up --build at the /server of the repository
 
-## FYI:
-### The following .env is reqired in /server
+### FYI:
+#### The following .env is reqired in /server
 ```
 SERVER_SECRET_KEY=08e0626e1fae5b9c5c247edb605a385df961754f6c780007911a72a2a979f48b // can be anything
 DATABASE_URI=sqlite:///../Area.db
