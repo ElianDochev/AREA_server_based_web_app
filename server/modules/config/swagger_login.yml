@@ -1,0 +1,391 @@
+swagger: '2.0'
+info:
+  title: 'Area API'
+  description: 'API for user login and token creation'
+  version: '1.0'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+paths:
+  /login:
+    post:
+      summary: 'Handles login and token creation'
+      description: 'Can send a username and password or a token. If a token is sent, it will be validated, and a new token will be sent back if valid. If a username and password are sent, they will be validated, and a token will be sent back if valid.'
+      consumes:
+        - application/x-www-form-urlencoded  # Specify the media type for form data
+      parameters:
+        - name: 'username'
+          in: 'formData'
+          type: 'string'
+          required: true
+          description: 'The username of the user'
+        - name: 'password'
+          in: 'formData'
+          type: 'string'
+          required: true
+          description: 'The password of the user'
+        - name: 'rememberMe'
+          in: 'formData'
+          type: 'boolean'
+          required: false
+          description: 'Whether to remember the user or not'
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            type: 'object'
+            properties:
+              token:
+                type: 'string'
+                description: 'The JWT token'
+        '401':
+          description: 'Invalid credentials or token expired'
+        '500':
+          description: 'Internal server error'
+
+  /register:
+    post:
+      summary: 'Handles registration and token creation'
+      description: 'Can send a username and password. If a username and password is sent it will be validated and new user will be added to BD. A token will be sent back as well.'
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: 'username'
+          in: 'formData'
+          type: 'string'
+          required: true
+          description: 'The username of the user'
+        - name: 'password'
+          in: 'formData'
+          type: 'string'
+          required: true
+          description: 'The password of the user'
+      responses:
+        '201':
+          description: 'Success'
+          schema:
+            type: 'object'
+            properties:
+              token:
+                type: 'string'
+                description: 'The JWT token'
+        '400':
+          description: 'Invalid credentials'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Internal server error'
+  /OuthGithub/authorize:
+    post:
+      summary: "Get GitHub OAuth Authorization URL"
+      description: "This endpoint is used to get the authorization URL for GitHub OAuth."
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: return_url
+          in: formData
+          description: "The return URL to redirect the user after authorization."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Authorization URL generated successfully."
+          schema:
+            type: object
+            properties:
+              auth_url:
+                type: string
+                description: "GitHub OAuth Authorization URL."
+        400:
+          description: "Bad Request - Invalid input."
+
+  /OauthGithub/access:
+    get:
+      summary: "GitHub OAuth Access Token"
+      description: "This endpoint exchanges an authorization code for an access token in GitHub OAuth."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: code
+          in: query
+          description: "The authorization code received after user authorization."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Access token obtained successfully."
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: "Access token for the user."
+              user_subs:
+                type: object
+                description: "User's subscribed services."
+        400:
+          description: "Bad Request - No code provided or error obtaining access token."
+  /about.json:
+    get:
+      summary: "Get Server Information"
+      description: "This endpoint is used to retrieve information about the server and its services."
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Server information retrieved successfully."
+          
+  /subscribe:
+    post:
+      summary: "Subscribe to a Service"
+      description: "Subscribe to a service with a valid login session (JWT token)."
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: service
+          in: formData
+          description: "The name of the service to subscribe to."
+          required: true
+          type: string
+        - name: service_args
+          in: formData
+          description: "Optional service arguments (if applicable)."
+          required: false
+          type: string
+        - name: Authorization
+          in: header
+          description: "JWT token for authentication."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Service added successfully."
+        400:
+          description: "Bad Request - Invalid service name."
+        401:
+          description: "Unauthorized - Invalid token or user not found."
+        403:
+          description: "Forbidden - No token provided."
+        500:
+          description: "Internal Server Error."
+
+  /unsubscribe:
+    post:
+      summary: "Unsubscribe from a Service"
+      description: "Unsubscribe from a service with a valid login session (JWT token)."
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: service
+          in: formData
+          description: "The name of the service to unsubscribe from."
+          required: true
+          type: string
+        - name: service_args
+          in: formData
+          description: "Optional service arguments (if applicable)."
+          required: false
+          type: string
+        - name: Authorization
+          in: header
+          description: "JWT token for authentication."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Service removed successfully."
+        400:
+          description: "Bad Request - Invalid service name."
+        401:
+          description: "Unauthorized - Invalid token or user not found."
+        403:
+          description: "Forbidden - No token provided."
+        500:
+          description: "Internal Server Error."
+  /refresh:
+    get:
+      summary: "Refresh JWT Token"
+      description: "Refresh a JWT token if a valid token is provided in the 'Authorization' header."
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token to be refreshed (must start with 'Bearer ')."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Token refreshed successfully."
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: "The new JWT token."
+        401:
+          description: "Unauthorized - Invalid token or credentials."
+        500:
+          description: "Internal Server Error."
+  /me:
+    get:
+      summary: "Get User Information"
+      description: "Retrieve user information based on a valid JWT token provided in the 'Authorization' header."
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token for user authentication (must start with 'Bearer ')."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "User information retrieved successfully."
+          schema:
+            type: object
+            properties:
+              user_subs:
+                type: object
+                description: "User's subscribed services."
+              admin:
+                type: boolean
+                description: "Flag indicating if the user is an administrator."
+        401:
+          description: "Unauthorized - Invalid token, user not found, or expired token."
+        500:
+          description: "Internal Server Error."
+  /trello:
+    get:
+      summary: "Access Trello Service"
+      description: "Access the Trello service by providing an access token. Requires a valid JWT token in the 'Authorization' header."
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token for authentication (must start with 'Bearer ')."
+          required: true
+          type: string
+        - name: access_token
+          in: query
+          description: "Access token for Trello service."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Trello service accessed successfully."
+        401:
+          description: "Unauthorized - Invalid token or user not found."
+        403:
+          description: "Forbidden - No Authorization header or invalid credentials."
+        502:
+          description: "Bad Gateway - DB error."
+  /github:
+    post:
+      summary: "Authenticate with GitHub"
+      description: "Authenticate with GitHub using an authorization code. Requires a valid JWT token in the 'Authorization' header."
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token for authentication (must start with 'Bearer ')."
+          required: true
+          type: string
+        - name: code
+          in: formData
+          description: "Authorization code for GitHub authentication."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Access token request sent successfully."
+        401:
+          description: "Unauthorized - Invalid token or user not found."
+        403:
+          description: "Forbidden - No Authorization header or invalid token."
+
+    options:
+      summary: "Options for GitHub Access"
+      description: "Allow various HTTP methods on this route to make the browser happy."
+      responses:
+        200:
+          description: "ok"
+
+    head:
+      summary: "Check User's GitHub Access"
+      description: "Check if the user has access to the GitHub service."
+      responses:
+        200:
+          description: "User has access to GitHub."
+        400:
+          description: "User doesn't have access to GitHub."
+        403:
+          description: "Forbidden - Request not authenticated."
+  /create_AREA:
+    post:
+      summary: "Create AREA"
+      description: "Create an AREA by specifying actions and reactions. Requires a valid JWT token in the 'Authorization' header."
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: "JWT token for authentication (must start with 'Bearer ')."
+          required: true
+          type: string
+        - name: action_service
+          in: formData
+          description: "Name of the action service."
+          required: true
+          type: string
+        - name: action_name
+          in: formData
+          description: "Name of the action to perform."
+          required: true
+          type: string
+        - name: action_params
+          in: formData
+          description: "Parameters for the action."
+          required: true
+          type: string
+        - name: reaction_service
+          in: formData
+          description: "Name of the reaction service."
+          required: true
+          type: string
+        - name: reaction_name
+          in: formData
+          description: "Name of the reaction to perform."
+          required: true
+          type: string
+        - name: reaction_params
+          in: formData
+          description: "Parameters for the reaction."
+          required: true
+          type: string
+      responses:
+        200:
+          description: "AREA added successfully."
+        400:
+          description: "Bad Request - Invalid input or service name."
+        401:
+          description: "Unauthorized - Invalid token or user not found."
+        403:
+          description: "Forbidden - No Authorization header or invalid credentials."
+        500:
+          description: "Internal Server Error."
